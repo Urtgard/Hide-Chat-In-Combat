@@ -1,0 +1,9 @@
+## Interface: 80100
+## Title: Hide Chat in Combat
+## Author: Urtgard
+## Version: @project-version@
+## OptionalDeps: Prat-3.0, UUI
+## X-Curse-Project-ID: 82271
+## X-WoWI-ID: 23878
+
+HCIC.lua
