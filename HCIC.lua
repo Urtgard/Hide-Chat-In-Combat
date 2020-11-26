@@ -1,15 +1,21 @@
 ------------------
 --Config
-local t = .5		-- fade time in seconds
+local t = .5 -- fade time in seconds
 ------------------
 
 local hcic = CreateFrame("Frame")
-local frames = {_}--, GeneralDockManager, ChatFrameMenuButton}
+local frames = {_}
+--, GeneralDockManager, ChatFrameMenuButton}
 local chatFrames = {}
 local MouseoverFrames = {}
 --Events
 local event = CreateFrame("Frame")
-event:SetScript("OnEvent", function(self, event, ...) self[event](self, ...) end)
+event:SetScript(
+	"OnEvent",
+	function(self, event, ...)
+		self[event](self, ...)
+	end
+)
 --Register events
 event:RegisterEvent("PLAYER_REGEN_ENABLED")
 event:RegisterEvent("PLAYER_REGEN_DISABLED")
@@ -18,10 +24,10 @@ event:RegisterEvent("PET_BATTLE_CLOSE")
 event:RegisterEvent("PET_BATTLE_OPENING_START")
 --Handle events
 function event:PLAYER_REGEN_ENABLED()
-    hcic:CombatEnd()
+	hcic:CombatEnd()
 end
 function event:PLAYER_REGEN_DISABLED()
-   hcic:CombatStart()
+	hcic:CombatStart()
 end
 function event:PLAYER_LOGIN()
 	hcic:Init()
@@ -35,35 +41,48 @@ end
 
 --
 function hcic:Init()
-	for i=1,NUM_CHAT_WINDOWS do
-		local f = _G["ChatFrame"..i]
-		if(f:IsShown()) then
-			local chatMouseover = CreateFrame("Frame", "HCIC"..i, UIParent)
-			chatMouseover:SetPoint("BOTTOMLEFT", "ChatFrame"..i, "BOTTOMLEFT", -20, -10)
-			chatMouseover:SetPoint("TOPRIGHT", "ChatFrame"..i, "TOPRIGHT", 10, 10)
+	for i = 1, NUM_CHAT_WINDOWS do
+		local f = _G["ChatFrame" .. i]
+		if (f:IsShown()) then
+			local chatMouseover = CreateFrame("Frame", "HCIC" .. i, UIParent)
+			chatMouseover:SetPoint("BOTTOMLEFT", "ChatFrame" .. i, "BOTTOMLEFT", -20, -10)
+			chatMouseover:SetPoint("TOPRIGHT", "ChatFrame" .. i, "TOPRIGHT", 10, 10)
 
-			chatMouseover.FadeOut = function (self) hcic:FadeOut(self) end
-			chatMouseover.FadeIn = function (self) hcic:FadeIn(self) end
-			
-			chatMouseover:SetScript("OnEnter", function(self)
-				if UnitAffectingCombat("player") or C_PetBattles.IsInBattle() then
-					self:FadeIn(self)
+			chatMouseover.FadeOut = function(self)
+				hcic:FadeOut(self)
+			end
+			chatMouseover.FadeIn = function(self)
+				hcic:FadeIn(self)
+			end
+
+			chatMouseover:SetScript(
+				"OnEnter",
+				function(self)
+					if UnitAffectingCombat("player") or C_PetBattles.IsInBattle() then
+						self:FadeIn(self)
+					end
 				end
-			end)
-			chatMouseover:SetScript("OnLeave", function(self) hcic:ChatOnLeave(self) end)
-			
-			chatMouseover.Frames = {_G["ChatFrame"..i], _G["ChatFrame"..i.."Tab"], _G["ChatFrame"..i.."ButtonFrame"]}
-			if (i==1) then
+			)
+			chatMouseover:SetScript(
+				"OnLeave",
+				function(self)
+					hcic:ChatOnLeave(self)
+				end
+			)
+
+			chatMouseover.Frames = {_G["ChatFrame" .. i], _G["ChatFrame" .. i .. "Tab"], _G["ChatFrame" .. i .. "ButtonFrame"]}
+			if (i == 1) then
 				table.insert(chatMouseover.Frames, GeneralDockManager)
 				table.insert(chatMouseover.Frames, GeneralDockManagerScrollFrame)
 				if ChatFrameMenuButton:IsShown() then
 					table.insert(chatMouseover.Frames, ChatFrameMenuButton)
 				end
 				table.insert(chatMouseover.Frames, QuickJoinToastButton)
+				table.insert(chatMouseover.Frames, ChatFrameChannelButton)
 			end
-			
+
 			chatMouseover:SetFrameStrata("BACKGROUND")
-			table.insert(MouseoverFrames, _G["HCIC"..i])
+			table.insert(MouseoverFrames, _G["HCIC" .. i])
 		end
 	end
 end
@@ -95,17 +114,18 @@ function hcic:fade(self, mode)
 		local alpha = frame:GetAlpha()
 		--fade in
 		if mode == 0 then
+			--fade out
 			frame.Show = Show
 			frame:Show()
-			UIFrameFadeIn(frame, t*(1-alpha), alpha, 1)
-		--fade out
+			UIFrameFadeIn(frame, t * (1 - alpha), alpha, 1)
 		else
-			UIFrameFadeOut(frame, t*alpha, alpha, 0)
-			frame.Show = function() end
+			UIFrameFadeOut(frame, t * alpha, alpha, 0)
+			frame.Show = function()
+			end
 			frame.fadeInfo.finishedArg1 = frame
 			frame.fadeInfo.finishedFunc = frame.Hide
 		end
-	end	
+	end
 end
 
 function hcic:ChatOnLeave(self)
@@ -136,11 +156,14 @@ function hcic:ChatOnLeave(self)
 	end
 end
 
-WorldFrame:HookScript("OnEnter", function()
-	if UnitAffectingCombat("player") or C_PetBattles.IsInBattle() then
-		hcic:CombatStart()
+WorldFrame:HookScript(
+	"OnEnter",
+	function()
+		if UnitAffectingCombat("player") or C_PetBattles.IsInBattle() then
+			hcic:CombatStart()
+		end
 	end
-end)
+)
 
 function hcic:IsInArray(array, s)
 	for _, v in pairs(array) do
@@ -151,12 +174,12 @@ function hcic:IsInArray(array, s)
 	return false
 end
 
-hooksecurefunc("FCF_Tab_OnClick", function(self)
-	chatFrame = _G["ChatFrame"..self:GetID()];
-	if (chatFrame.isDocked) then
-		HCIC1.Frames[1] = chatFrame
+hooksecurefunc(
+	"FCF_Tab_OnClick",
+	function(self)
+		chatFrame = _G["ChatFrame" .. self:GetID()]
+		if (chatFrame.isDocked) then
+			HCIC1.Frames[1] = chatFrame
+		end
 	end
-end)
-
-
-
+)

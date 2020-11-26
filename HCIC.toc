@@ -1,4 +1,4 @@
-## Interface: 80300
+## Interface: 90001
 ## Title: Hide Chat in Combat
 ## Author: Urtgard
 ## Version: @project-version@
